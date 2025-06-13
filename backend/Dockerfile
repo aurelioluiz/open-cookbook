@@ -1,23 +1,24 @@
 FROM php:8.2-fpm
 
-WORKDIR /app
+RUN apt-get update && apt-get install -y \
+    git \
+    curl \
+    libpng-dev \
+    libonig-dev \
+    libxml2-dev \
+    zip \
+    unzip
 
-# Configurar fontes do apt para ignorar assinaturas temporariamente
-RUN echo "Acquire::AllowInsecureRepositories \"true\";" > /etc/apt/apt.conf.d/99allow-insecure \
-    && apt-get update && apt-get install -y \
-        zip \
-        unzip \
-        git \
-    && docker-php-ext-install pdo pdo_mysql \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
+WORKDIR /app
+
 COPY . .
 
-RUN composer install --optimize-autoloader
+RUN composer install
 
-RUN chown -R www-data:www-data /app/storage /app/bootstrap/cache
+EXPOSE 9000
 
-CMD php-fpm
+CMD ["php-fpm"]

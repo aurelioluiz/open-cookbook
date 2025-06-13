@@ -1,41 +1,25 @@
-import { useState, useEffect } from 'react'
-import axios from 'axios'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { AuthProvider } from './context/AuthContext';
+import Login from './pages/Login';
+import Register from './pages/Register';
+import Recipes from './pages/Recipes';
+import RecipeDetail from './pages/RecipeDetail';
+import './index.css';
 
 function App() {
-  const [count, setCount] = useState(0)
-  const [data, setData] = useState(null)
-
-  useEffect(() => {
-    axios.get('/api/test')
-      .then(response => setData(response.data))
-      .catch(error => console.error(error));
-  }, [])
-
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        {data && <p>{data.message}</p>}
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <AuthProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/recipes" element={<Recipes />} />
+          <Route path="/recipes/:id" element={<RecipeDetail />} />
+          <Route path="/" element={<Recipes />} />
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
+  );
 }
 
-export default App
+export default App;
